@@ -39,7 +39,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className="min-h-screen from-gray-900 via-gray-800 to-black text-white">
       {/* Hero */}
       <section className="flex flex-col items-center justify-center px-6 pt-24 pb-20 text-center">
         <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-700/50 bg-cyan-900/40 px-4 py-1.5 text-sm font-semibold text-cyan-400">
@@ -111,7 +111,7 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Bottom */}
-      <section className="mx-auto w-[min(860px,90%)] mb-20 rounded-3xl border border-cyan-800/40 bg-linear-to-br from-cyan-900/40 to-gray-800 p-12 text-center shadow-xl">
+      <section className="mx-auto w-[min(860px,90%)] mb-20 rounded-3xl  bg-linear-to-br from-cyan-900/40 to-gray-800 p-12 text-center shadow-xl">
         <h2 className="mb-3 text-2xl font-extrabold">Ready to get started?</h2>
         <p className="mb-7 text-sm text-gray-300">
           Join thousands of job seekers who improved their resumes and landed more interviews.
