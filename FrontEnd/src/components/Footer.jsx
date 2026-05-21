@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 const Footer = () => {
   const navigate = useNavigate();
   return (
-    <footer className="w-[min(1280px,94%)] rounded-lg mx-auto  bg-gray-800/80 backdrop-blur-sm px-4 py-8 sm:px-6 lg:px-8 max-[680px]:w-[min(1280px,96%)] max-[680px]:py-6 max-[480px]:w-full max-[480px]:py-4 max-[480px]:px-2">
+    <footer className="w-[min(1280px,94%)] rounded-lg mx-auto border-t-2 border-gray-700/50 bg-gray-800/80 backdrop-blur-sm px-4 py-8 sm:px-6 lg:px-8 max-[680px]:w-[min(1280px,96%)] max-[680px]:py-6 max-[480px]:w-full max-[480px]:py-4 max-[480px]:px-2">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-10 lg:gap-12">
         <div className="flex w-full flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="flex w-full flex-col gap-4 md:w-2/5">
@@ -41,7 +41,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-center text-sm text-gray-500 md:flex-row md:text-left">
+        <div className="flex w-full flex-col items-center justify-between gap-4 border-t border-gray-700/40 pt-6 text-center text-sm text-gray-500 md:flex-row md:text-left">
           <p>
             &copy; 2026 All rights reserved to{" "}
             <a href="/home" className="text-cyan-400 transition hover:text-cyan-300 hover:underline">ResumeLens</a>
