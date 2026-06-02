@@ -1,17 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Plus, Loader2, FileText, Mail, Phone, MapPin, Trash2 } from "lucide-react";
 
 const ViewResume = () => {
-  const [resumes, setResumes] = useState(() => {
-    const saved = JSON.parse(localStorage.getItem("savedResumes") || "[]");
-    return [...saved].reverse();
-  });
+  const [resumes, setResumes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const handleDelete = (id) => {
-    const updated = resumes.filter((r) => r.id !== id);
-    setResumes(updated);
-    localStorage.setItem("savedResumes", JSON.stringify([...updated].reverse()));
+  useEffect(() => {
+    const fetchResumes = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:3000/api/resumes", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Failed to fetch");
+        const data = await res.json();
+        setResumes(data.resumes || []);
+      } catch (err) {
+        console.error("Failed to load resumes:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchResumes();
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:3000/api/resumes/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Delete failed");
+      setResumes((prev) => prev.filter((r) => r.id !== id));
+    } catch (err) {
+      console.error("Failed to delete resume:", err);
+    }
   };
 
   const formatDate = (iso) =>
@@ -30,15 +56,20 @@ const ViewResume = () => {
         </div>
         <button
           onClick={() => navigate("/resume")}
-          className="rounded-xl bg-linear-to-r from-cyan-600 to-cyan-500 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5"
+          className="rounded-xl flex items-center bg-linear-to-r from-cyan-600 to-cyan-500 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5"
         >
-          + Create New Resume
+          <Plus className="h-4 w-4 mr-1.5" /> Create New Resume
         </button>
       </div>
 
-      {resumes.length === 0 ? (
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-cyan-400 mb-4" />
+          <p className="text-sm text-gray-400">Loading your resumes...</p>
+        </div>
+      ) : resumes.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-cyan-700/40 bg-white/5 py-20 text-center">
-          <i className="fa-regular fa-file text-5xl text-gray-600 mb-4"></i>
+          <FileText className="h-12 w-12 text-gray-600 mb-4" />
           <h2 className="text-lg font-bold text-white">No resumes saved yet</h2>
           <p className="text-sm text-gray-400 mt-1 mb-6 max-w-xs">
             Build a resume using the Resume Builder and save it to see it here.
@@ -71,22 +102,22 @@ const ViewResume = () => {
                 )}
               </div>
 
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1.5">
                 {r.data?.email && (
-                  <span className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <i className="fa-regular fa-envelope text-[10px]"></i>
+                  <span className="flex items-center gap-2 text-xs text-gray-400">
+                    <Mail className="h-3.5 w-3.5 shrink-0 text-cyan-500" />
                     {r.data.email}
                   </span>
                 )}
                 {r.data?.phone && (
-                  <span className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <i className="fa-solid fa-phone text-[10px]"></i>
+                  <span className="flex items-center gap-2 text-xs text-gray-400">
+                    <Phone className="h-3.5 w-3.5 shrink-0 text-cyan-500" />
                     {r.data.phone}
                   </span>
                 )}
                 {r.data?.location && (
-                  <span className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <i className="fa-solid fa-location-dot text-[10px]"></i>
+                  <span className="flex items-center gap-2 text-xs text-gray-400">
+                    <MapPin className="h-3.5 w-3.5 shrink-0 text-cyan-500" />
                     {r.data.location}
                   </span>
                 )}
@@ -101,10 +132,10 @@ const ViewResume = () => {
                 </button>
                 <button
                   onClick={() => handleDelete(r.id)}
-                  className="rounded-lg border border-red-500/30 px-3 py-1.5 text-xs font-semibold text-red-400 transition hover:bg-red-900/20"
+                  className="rounded-lg flex items-center justify-center border border-red-500/30 px-3 py-1.5 text-xs font-semibold text-red-400 transition hover:bg-red-900/20"
                   aria-label="Delete resume"
                 >
-                  <i className="fa-regular fa-trash-can"></i>
+                  <Trash2 className="h-4 w-4" />
                 </button>
               </div>
             </div>

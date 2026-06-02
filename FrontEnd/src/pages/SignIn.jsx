@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { TrendingUp, BarChart2, Bolt } from "lucide-react";
 
 const features = [
   {
-    icon: "fa-solid fa-chart-line",
+    icon: TrendingUp,
     title: "Smart ATS Optimization",
     desc: "Improve keyword matching and boost resume selection chances.",
   },
   {
-    icon: "fa-solid fa-chart-bar",
+    icon: BarChart2,
     title: "Detailed Insights",
     desc: "Get feedback on skills, formatting, and missing sections.",
   },
   {
-    icon: "fa-solid fa-bolt",
+    icon: Bolt,
     title: "Instant Analysis",
     desc: "Upload your resume and get results in seconds.",
   },
@@ -25,15 +26,21 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    const user = users.find((u) => u.email === email && u.password === password);
-    if (user) {
-      localStorage.setItem("userName", `${user.firstName} ${user.lastName}`);
+    try {
+      const res = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.message || "Login failed."); return; }
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", `${data.user.firstName} ${data.user.lastName}`);
       navigate("/home");
-    } else {
-      setError("Invalid email or password. Please try again.");
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
     }
   };
 
@@ -54,17 +61,20 @@ const SignIn = () => {
           <h1 className="text-3xl font-extrabold text-white mb-2">Welcome back</h1>
           <p className="text-gray-400 text-sm mb-10">Sign in to continue building your career.</p>
           <div className="space-y-7">
-            {features.map((f) => (
-              <div key={f.title} className="flex gap-4 items-start">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/40 text-cyan-400">
-                  <i className={f.icon}></i>
+            {features.map((f) => {
+              const Icon = f.icon;
+              return (
+                <div key={f.title} className="flex gap-4 items-start">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/40 text-cyan-400">
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-white mb-1">{f.title}</h2>
+                    <p className="text-xs text-gray-400">{f.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-sm font-bold text-white mb-1">{f.title}</h2>
-                  <p className="text-xs text-gray-400">{f.desc}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
