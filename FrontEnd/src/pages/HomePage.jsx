@@ -1,21 +1,22 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { TrendingUp, Lightbulb, Target, CheckCircle2, UploadCloud } from "lucide-react";
 
 const features = [
   {
-    icon: "fa-solid fa-chart-line",
+    icon: TrendingUp,
     title: "ATS Compatibility Score",
     desc: "Check how well your resume matches modern applicant tracking systems.",
     color: "#0891b2",
   },
   {
-    icon: "fa-solid fa-lightbulb",
+    icon: Lightbulb,
     title: "Smart Content Suggestions",
     desc: "Improve weak bullets, keywords, and phrasing using practical AI recommendations.",
     color: "#7c3aed",
   },
   {
-    icon: "fa-solid fa-bullseye",
+    icon: Target,
     title: "Role-Focused Optimization",
     desc: "Tailor your resume for specific job descriptions and increase interview chances.",
     color: "#0f766e",
@@ -45,7 +46,7 @@ const HomePage = () => {
       <section className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 items-center rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 mb-6 max-[680px]:p-5 max-[480px]:rounded-xl max-[480px]:p-4">
         <div className="flex flex-col gap-4">
           <span className="w-fit inline-flex items-center gap-2 rounded-full border border-cyan-700/50 bg-cyan-900/40 px-4 py-1.5 text-sm font-semibold text-cyan-400">
-            <i className="fa-regular fa-circle-check" aria-hidden="true"></i>
+            <CheckCircle2 className="h-4 w-4" />
             AI-Powered Resume Analysis
           </span>
 
@@ -88,21 +89,24 @@ const HomePage = () => {
 
       {/* Feature cards */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {features.map((f) => (
-          <article
-            key={f.title}
-            className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 transition hover:-translate-y-1 hover:border-white/20 max-[480px]:rounded-xl"
-          >
-            <div
-              className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl text-base"
-              style={{ background: f.color + "33", color: f.color }}
+        {features.map((f) => {
+          const Icon = f.icon;
+          return (
+            <article
+              key={f.title}
+              className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 transition hover:-translate-y-1 hover:border-white/20 max-[480px]:rounded-xl"
             >
-              <i className={f.icon}></i>
-            </div>
-            <h3 className="mb-2 text-sm font-bold text-white">{f.title}</h3>
-            <p className="text-xs leading-relaxed text-gray-400">{f.desc}</p>
-          </article>
-        ))}
+              <div
+                className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl"
+                style={{ background: f.color + "33", color: f.color }}
+              >
+                <Icon className="h-4 w-4" />
+              </div>
+              <h3 className="mb-2 text-sm font-bold text-white">{f.title}</h3>
+              <p className="text-xs leading-relaxed text-gray-400">{f.desc}</p>
+            </article>
+          );
+        })}
       </section>
 
       {/* Upload + ATS form */}
@@ -123,7 +127,7 @@ const HomePage = () => {
                 onClick={handleUploadClick}
                 className="cursor-pointer border-dashed border-2  hover:bg-white/10 border-cyan-700/40 rounded-xl p-6 flex flex-col items-center gap-3 hover:border-cyan-500/60"
               >
-                <i className="fa-solid fa-cloud-arrow-up text-cyan-400 text-3xl"></i>
+                <UploadCloud className="text-cyan-400 h-8 w-8" />
                 <p className="text-sm font-semibold text-white">
                   Click or drag to upload resume
                 </p>
@@ -131,12 +135,6 @@ const HomePage = () => {
                   PDF, DOC, DOCX supported
                 </p>
               </div>
-              {/* <img
-                src="upload.jpg"
-                onClick={handleUploadClick}
-                alt="upload PDF"
-                className="block w-full max-w-70 h-auto rounded-xl cursor-pointer max-[680px]:max-w-52"
-              /> */}
               <input
                 ref={uploadInputRef}
                 type="file"
@@ -151,7 +149,7 @@ const HomePage = () => {
             </>
           ) : (
             <>
-              <i className="fa-regular fa-circle-check text-green-400 text-3xl"></i>
+              <CheckCircle2 className="text-green-400 h-8 w-8" />
               <p className="text-sm font-semibold text-green-400">
                 {uploadedFile.name}
               </p>
@@ -182,7 +180,7 @@ const HomePage = () => {
                       key={item}
                       className="flex items-center gap-2 text-white text-xs"
                     >
-                      <i className="fa-regular fa-circle-check"></i>
+                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-white" />
                       {item}
                     </li>
                   ))}
@@ -206,7 +204,7 @@ const HomePage = () => {
                       key={item}
                       className="flex items-center gap-2 text-white text-xs"
                     >
-                      <i className="fa-regular fa-circle-check"></i>
+                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-white" />
                       {item}
                     </li>
                   ))}

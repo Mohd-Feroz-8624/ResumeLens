@@ -1,24 +1,25 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { TrendingUp, FileText, Sparkles, Bolt } from "lucide-react";
 
 const features = [
   {
-    icon: "fa-solid fa-arrow-trend-up",
+    icon: TrendingUp,
     title: "Increase Interview Chances",
     desc: "Optimize your resume to match job descriptions and pass ATS filters.",
   },
   {
-    icon: "fa-solid fa-file-lines",
+    icon: FileText,
     title: "Structured Feedback",
     desc: "Get detailed insights on formatting, keywords, and missing sections.",
   },
   {
-    icon: "fa-solid fa-robot",
+    icon: Sparkles,
     title: "AI-Powered Recommendations",
     desc: "Receive intelligent suggestions to improve content quality.",
   },
   {
-    icon: "fa-solid fa-bolt",
+    icon: Bolt,
     title: "Instant Analysis",
     desc: "Upload your resume and get real-time evaluation.",
   },
@@ -37,16 +38,29 @@ const Signup = () => {
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password !== form.confirm) { setError("Passwords do not match."); return; }
-    // if (form.password.length < 6) { setError("Password must be at least 6 characters."); return; }
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    if (users.find((u) => u.email === form.email)) { setError("An account with this email already exists."); return; }
-    users.push({ email: form.email, password: form.password, firstName: form.firstName, lastName: form.lastName });
-    localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("userName", `${form.firstName} ${form.lastName}`);
-    navigate("/home");
+
+    try {
+      const res = await fetch("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          password: form.password,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.message || "Registration failed."); return; }
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", `${data.user.firstName} ${data.user.lastName}`);
+      navigate("/home");
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    }
   };
 
   const inputCls =
@@ -112,17 +126,20 @@ const Signup = () => {
             Join thousands who improved their resumes and landed more interviews.
           </p>
           <div className="space-y-7">
-            {features.map((f) => (
-              <div key={f.title} className="flex gap-4 items-start">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/40 text-cyan-400">
-                  <i className={f.icon}></i>
+            {features.map((f) => {
+              const Icon = f.icon;
+              return (
+                <div key={f.title} className="flex gap-4 items-start">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/40 text-cyan-400">
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-white mb-1">{f.title}</h2>
+                    <p className="text-xs text-gray-400">{f.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-sm font-bold text-white mb-1">{f.title}</h2>
-                  <p className="text-xs text-gray-400">{f.desc}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

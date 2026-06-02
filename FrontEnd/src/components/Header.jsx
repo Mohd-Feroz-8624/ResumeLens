@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("userName");
+    localStorage.removeItem("token");
     setIsProfileMenuOpen(false);
     navigate("/signin");
   };
@@ -41,16 +43,14 @@ const Header = () => {
         <button
           type="button"
           onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-          className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-gray-300 transition hover:border-white/40 hover:bg-white/10 lg:hidden"
+          className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-white/5 p-2 text-gray-300 transition hover:border-white/40 hover:bg-white/10 lg:hidden"
           aria-label="Toggle menu"
         >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            {isMobileMenuOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
+          {isMobileMenuOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </button>
 
         <div
