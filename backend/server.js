@@ -25,19 +25,32 @@ app.use('/api/analysis', analysisRoutes);
 
 // Health check
 app.get('/', (req, res) => {
-  res.json({ message: 'ResumeLens API is running!' });
+  const dbState = mongoose.connection.readyState;
+  const dbStatusMap = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting',
+  };
+  res.json({
+    message: 'ResumeLens API is running!',
+    database: dbStatusMap[dbState] || 'unknown',
+  });
 });
 
-// Connect to MongoDB and start server
+// Start server immediately
+app.listen(port, () => {
+  console.log(`🚀 Server running at http://localhost:${port}`);
+});
+
+// Connect to MongoDB in the background
+console.log('⏳ Connecting to MongoDB...');
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ Connected to MongoDB');
-    app.listen(port, () => {
-      console.log(`🚀 Server running at http://localhost:${port}`);
-    });
   })
   .catch((err) => {
     console.error('❌ MongoDB connection error:', err.message);
-    process.exit(1);
+    console.error('💡 Please check your MONGO_URI in .env or network/IP whitelist configuration.');
   });
