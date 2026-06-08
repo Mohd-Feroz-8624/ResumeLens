@@ -56,6 +56,71 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// GET /api/resumes/:id — Get a single resume by ID
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const resume = await Resume.findOne({
+      _id: req.params.id,
+      userId: req.user.id,
+    }).lean();
+
+    if (!resume) {
+      return res.status(404).json({ message: 'Resume not found.' });
+    }
+
+    res.json({
+      resume: {
+        id: resume._id,
+        name: resume.name,
+        template: resume.template,
+        data: resume.data,
+        savedAt: resume.savedAt,
+      },
+    });
+  } catch (err) {
+    console.error('Get single resume error:', err.message);
+    res.status(500).json({ message: 'Failed to fetch resume.' });
+  }
+});
+
+// PUT /api/resumes/:id — Update a resume
+router.put('/:id', auth, async (req, res) => {
+  try {
+    const { name, template, data } = req.body;
+
+    const resume = await Resume.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.id },
+      {
+        $set: {
+          name: name || 'Untitled Resume',
+          template: template || 'Classic',
+          data: data || {},
+          savedAt: new Date(),
+        },
+      },
+      { new: true }
+    );
+
+    if (!resume) {
+      return res.status(404).json({ message: 'Resume not found.' });
+    }
+
+    res.json({
+      message: 'Resume updated successfully.',
+      resume: {
+        id: resume._id,
+        name: resume.name,
+        template: resume.template,
+        data: resume.data,
+        savedAt: resume.savedAt,
+      },
+    });
+  } catch (err) {
+    console.error('Update resume error:', err.message);
+    res.status(500).json({ message: 'Failed to update resume.' });
+  }
+});
+
 // DELETE /api/resumes/:id — Delete a resume
 router.delete('/:id', auth, async (req, res) => {
   try {
