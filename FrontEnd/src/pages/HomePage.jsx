@@ -23,6 +23,16 @@ const features = [
   },
 ];
 
+
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+
+ if (file) {
+  setResumeFile(file);
+  setIsUploaded(false);
+}
+};
+
 const HomePage = () => {
   const navigate = useNavigate();
   const uploadInputRef = useRef(null);
@@ -249,7 +259,76 @@ const HomePage = () => {
             </div>
           )}
         </div>
-      </section>
+
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-5">
+          <h2 className="text-xl font-bold text-red-700 mb-3">
+            Suggestions
+          </h2>
+
+          <ul className="space-y-2">
+            <li>⚡ Add more technical keywords</li>
+            <li>⚡ Quantify achievements</li>
+            <li>⚡ Improve project descriptions</li>
+            <li>⚡ Add certifications</li>
+            <li>⚡ Use stronger action verbs</li>
+          </ul>
+        </div>
+
+      </div>
+    ) : (
+      <div className="w-full">
+
+        <h2 className="text-center text-2xl font-bold text-slate-800">
+          Get Your ATS Score
+        </h2>
+
+        <div className="flex flex-col gap-4 mt-6">
+
+          <div>
+            <h6 className="mb-2 font-semibold">
+              Target Role <span className="text-red-600">*</span>
+            </h6>
+
+            <input
+              type="text"
+              placeholder="Target role which you are looking for?"
+              className="w-full border border-slate-300 rounded-lg p-3"
+            />
+          </div>
+
+          <div>
+            <h6 className="mb-2 font-semibold">
+              Experience <span className="text-red-600">*</span>
+            </h6>
+
+            <input
+              type="number"
+              placeholder="What is Your Experience?"
+              className="w-full border border-slate-300 rounded-lg p-3"
+            />
+          </div>
+
+          <button
+            className="rounded-xl px-5 py-3 mt-3 font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
+            onClick={() => {
+              if (!resumeFile) {
+                alert("Please upload a resume first");
+                return;
+              }
+
+              setIsUploaded(true);
+            }}
+          >
+            Analyze Resume
+          </button>
+
+        </div>
+      </div>
+    )}
+
+  </div>
+
+</section>
     </div>
   );
 };
