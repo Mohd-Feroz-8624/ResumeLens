@@ -65,7 +65,11 @@ const Signup = () => {
 
   const inputCls =
     "w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition";
-
+  
+    const passwordValid =
+  form.password.length >= 6 &&
+  /[A-Z]/.test(form.password) &&
+  /\d/.test(form.password);
   return (
     <div className="min-h-screen flex bg-linear-to-br from-gray-900 via-gray-800 to-black">
       {/* Left panel – form */}
@@ -89,8 +93,72 @@ const Signup = () => {
                 <input type="text" placeholder="Last Name" required value={form.lastName} onChange={set("lastName")} className={inputCls} />
               </div>
               <input type="email" placeholder="Email" required value={form.email} onChange={set("email")} className={inputCls} />
-              <input type="password" placeholder="Password" required value={form.password} onChange={set("password")} className={inputCls} />
-              <input type="password" placeholder="Confirm Password" required value={form.confirm} onChange={set("confirm")} className={inputCls} />
+              <input
+                  type="password"
+                  placeholder="Password"
+                  required
+                  value={form.password}
+                  onChange={set("password")}
+                  className={inputCls}
+                />
+
+                {form.password && (
+                  <div className="mt-2 rounded-lg border border-cyan-500/20 bg-white/5 p-3">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                      Password Requirements
+                    </p>
+
+                    <div className="space-y-1">
+                      <p
+                        className={`flex items-center gap-2 text-sm ${
+                          form.password.length >= 6
+                            ? "text-green-400"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        <span>
+                          {form.password.length >= 6 ? "✓" : "○"}
+                        </span>
+                        At least 6 characters
+                      </p>
+
+                      <p
+                        className={`flex items-center gap-2 text-sm ${
+                          /[A-Z]/.test(form.password)
+                            ? "text-green-400"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        <span>
+                          {/[A-Z]/.test(form.password) ? "✓" : "○"}
+                        </span>
+                        One uppercase letter
+                      </p>
+
+                      <p
+                        className={`flex items-center gap-2 text-sm ${
+                          /\d/.test(form.password)
+                            ? "text-green-400"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        <span>
+                          {/\d/.test(form.password) ? "✓" : "○"}
+                        </span>
+                        One number
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  required
+                  value={form.confirm}
+                  onChange={set("confirm")}
+                  className={inputCls}
+                />
 
               {error && <p className="text-red-400 text-xs">{error}</p>}
 
