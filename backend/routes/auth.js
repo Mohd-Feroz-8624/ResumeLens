@@ -1,89 +1,167 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+const auth = require("../middleware/auth");
+const { validateSignup, validateLogin } = require("../utils/validators");
+const { handleError } = require("../utils/errorHandler");
 
 const router = express.Router();
 
 // Helper: generate JWT
 const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
-// POST /api/auth/register
-router.post('/register', async (req, res) => {
+// Helper: format user response
+const formatUserResponse = (user) => {
+  return {
+    id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    createdAt: user.createdAt,
+  };
+};
+
+// POST /api/auth/register - Sign up new user
+router.post("/register", async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
 
-    // Validate required fields
-    if (!firstName || !lastName || !email || !password) {
-      return res.status(400).json({ message: 'All fields are required.' });
+    console.log("[Register] Received:", {
+      firstName,
+      lastName,
+      email,
+      passwordLength: password?.length,
+    });
+
+    // Validate input
+    const validation = validateSignup({ firstName, lastName, email, password });
+    if (!validation.isValid) {
+      console.log("[Register] Validation failed:", validation.errors);
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: validation.errors,
+      });
     }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
-      return res.status(400).json({ message: 'An account with this email already exists.' });
+      console.log("[Register] User already exists:", email);
+      return res
+        .status(400)
+        .json({ message: "An account with this email already exists." });
     }
 
+    console.log("[Register] Creating user...");
     // Create user
-    const user = await User.create({ firstName, lastName, email, password });
+    const user = await User.create({
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.toLowerCase().trim(),
+      password,
+    });
 
+    console.log("[Register] User created successfully:", user._id);
     // Generate token
     const token = generateToken(user._id);
 
     res.status(201).json({
-      message: 'Account created successfully.',
+      message: "Account created successfully. Welcome to ResumeLens!",
       token,
-      user: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-      },
+      user: formatUserResponse(user),
     });
   } catch (err) {
-    console.error('Register error:', err.message);
-    res.status(500).json({ message: 'Server error. Please try again later.' });
+    console.error("[Register] Error caught:", err);
+    handleError(err, res);
   }
 });
 
-// POST /api/auth/login
-router.post('/login', async (req, res) => {
+// POST /api/auth/login - Sign in user
+router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required.' });
+    // Validate input
+    const validation = validateLogin({ email, password });
+    if (!validation.isValid) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: validation.errors,
+      });
     }
 
     // Find user
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password.' });
+      return res.status(401).json({ message: "Invalid email or password." });
     }
 
     // Compare password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password.' });
+      return res.status(401).json({ message: "Invalid email or password." });
     }
 
     // Generate token
     const token = generateToken(user._id);
 
     res.json({
-      message: 'Login successful.',
+      message: "Login successful. Welcome back!",
       token,
-      user: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-      },
+      user: formatUserResponse(user),
     });
   } catch (err) {
-    console.error('Login error:', err.message);
-    res.status(500).json({ message: 'Server error. Please try again later.' });
+    handleError(err, res);
+  }
+});
+
+// GET /api/auth/profile - Get current user profile (protected)
+router.get("/profile", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.json({
+      message: "Profile retrieved successfully.",
+      user: formatUserResponse(user),
+    });
+  } catch (err) {
+    handleError(err, res);
+  }
+});
+
+// POST /api/auth/verify-token - Verify if token is valid
+router.post("/verify-token", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.json({
+      message: "Token is valid.",
+      isValid: true,
+      user: formatUserResponse(user),
+    });
+  } catch (err) {
+    handleError(err, res);
+  }
+});
+
+// POST /api/auth/logout - Logout user (client-side token removal)
+router.post("/logout", auth, (req, res) => {
+  try {
+    res.json({
+      message:
+        "Logout successful. Please delete your token on the client side.",
+      isLoggedOut: true,
+    });
+  } catch (err) {
+    handleError(err, res);
   }
 });
 
