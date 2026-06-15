@@ -1,6 +1,12 @@
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TrendingUp, Lightbulb, Target, CheckCircle2, UploadCloud } from "lucide-react";
+import {
+  CheckCircle2,
+  Lightbulb,
+  Target,
+  TrendingUp,
+  UploadCloud,
+} from "lucide-react";
 
 const features = [
   {
@@ -23,49 +29,55 @@ const features = [
   },
 ];
 
-
-const handleFileChange = (e) => {
-  const file = e.target.files[0];
-
- if (file) {
-  setResumeFile(file);
-  setIsUploaded(false);
-}
-};
-
 const HomePage = () => {
   const navigate = useNavigate();
   const uploadInputRef = useRef(null);
   const uploadSectionRef = useRef(null);
   const [isUploaded, setIsUploaded] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState();
+  const [uploadedFile, setUploadedFile] = useState(null);
   const [targetRole, setTargetRole] = useState("");
   const [experience, setExperience] = useState("");
 
   const handleUploadClick = () => uploadInputRef.current?.click();
 
-  const handleAnalyzeClick = () =>
+  const handleAnalyzeClick = () => {
     uploadSectionRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0] ?? null;
+
+    setUploadedFile(file);
+    setIsUploaded(false);
+  };
+
+  const handleSubmit = () => {
+    if (!uploadedFile) {
+      alert("Please upload a resume first");
+      return;
+    }
+
+    setIsUploaded(true);
+  };
 
   return (
-    <div className="w-[min(1280px,92%)] mx-auto py-9 pb-14 max-[680px]:w-[min(1280px,96%)] max-[680px]:py-6 max-[480px]:w-full max-[480px]:py-4 max-[480px]:px-3">
-      {/* Hero */}
-      <section className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 items-center rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 mb-6 max-[680px]:p-5 max-[480px]:rounded-xl max-[480px]:p-4">
+    <div className="mx-auto w-[min(1280px,92%)] py-9 pb-14 max-[680px]:w-[min(1280px,96%)] max-[680px]:py-6 max-[480px]:w-full max-[480px]:px-3 max-[480px]:py-4">
+      <section className="mb-6 grid grid-cols-1 items-center gap-8 rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm lg:grid-cols-[1.1fr_0.9fr] max-[680px]:p-5 max-[480px]:rounded-xl max-[480px]:p-4">
         <div className="flex flex-col gap-4">
-          <span className="w-fit inline-flex items-center gap-2 rounded-full border border-cyan-700/50 bg-cyan-900/40 px-4 py-1.5 text-sm font-semibold text-cyan-400">
+          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan-700/50 bg-cyan-900/40 px-4 py-1.5 text-sm font-semibold text-cyan-400">
             <CheckCircle2 className="h-4 w-4" />
             AI-Powered Resume Analysis
           </span>
 
-          <h1 className="text-white text-[clamp(2rem,4.4vw,3.2rem)] leading-[1.07] font-extrabold max-[680px]:text-[clamp(1.8rem,8vw,2.6rem)]">
+          <h1 className="text-[clamp(2rem,4.4vw,3.2rem)] font-extrabold leading-[1.07] text-white max-[680px]:text-[clamp(1.8rem,8vw,2.6rem)]">
             Transform Your Resume with{" "}
             <span className="text-cyan-400">AI Intelligence</span>
           </h1>
 
-          <p className="max-w-[60ch] text-gray-300 text-[clamp(0.95rem,1.4vw,1.05rem)] leading-[1.7] max-[680px]:max-w-none">
+          <p className="max-w-[60ch] text-[clamp(0.95rem,1.4vw,1.05rem)] leading-[1.7] text-gray-300 max-[680px]:max-w-none">
             Get instant insights into your resume with Resume Analyzer, and
             increase your chances of landing your dream job.
           </p>
@@ -73,14 +85,14 @@ const HomePage = () => {
           <div className="flex flex-wrap gap-3 max-[680px]:w-full">
             <button
               type="button"
-              className="rounded-xl px-5 py-2.5 text-sm font-bold bg-linear-to-r from-cyan-600 to-cyan-500 text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5 max-[680px]:flex-[1_1_100%]"
+              className="rounded-xl bg-linear-to-r from-cyan-600 to-cyan-500 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5 max-[680px]:flex-[1_1_100%]"
               onClick={handleAnalyzeClick}
             >
               Analyze Resume
             </button>
             <button
               type="button"
-              className="rounded-xl px-5 py-2.5 text-sm font-bold border border-white/20 text-white bg-white/5 transition hover:-translate-y-0.5 hover:bg-white/10 max-[680px]:flex-[1_1_100%]"
+              className="rounded-xl border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-white/10 max-[680px]:flex-[1_1_100%]"
               onClick={() => navigate("/resume")}
             >
               Create Resume
@@ -88,62 +100,56 @@ const HomePage = () => {
           </div>
         </div>
 
-        <div className="flex justify-center items-center max-lg:-order-1">
+        <div className="flex items-center justify-center max-lg:-order-1">
           <img
             src="resume_home.jpg"
             alt="Resume Analysis Illustration"
-            className="w-[min(100%,470px)] rounded-xl object-cover border border-white/10 shadow-[0_14px_25px_rgba(0,0,0,0.35)]"
+            className="w-[min(100%,470px)] rounded-xl border border-white/10 object-cover shadow-[0_14px_25px_rgba(0,0,0,0.35)]"
           />
         </div>
       </section>
 
-      {/* Feature cards */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {features.map((f) => {
-          const Icon = f.icon;
+      <section className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        {features.map((feature) => {
+          const Icon = feature.icon;
+
           return (
             <article
-              key={f.title}
-              className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 transition hover:-translate-y-1 hover:border-white/20 max-[480px]:rounded-xl"
+              key={feature.title}
+              className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm transition hover:-translate-y-1 hover:border-white/20 max-[480px]:rounded-xl"
             >
               <div
                 className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl"
-                style={{ background: f.color + "33", color: f.color }}
+                style={{ background: `${feature.color}33`, color: feature.color }}
               >
                 <Icon className="h-4 w-4" />
               </div>
-              <h3 className="mb-2 text-sm font-bold text-white">{f.title}</h3>
-              <p className="text-xs leading-relaxed text-gray-400">{f.desc}</p>
+              <h3 className="mb-2 text-sm font-bold text-white">{feature.title}</h3>
+              <p className="text-xs leading-relaxed text-gray-400">{feature.desc}</p>
             </article>
           );
         })}
       </section>
 
-      {/* Upload + ATS form */}
       <section
-        className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-4 items-stretch"
         ref={uploadSectionRef}
+        className="grid grid-cols-1 gap-4 items-stretch lg:grid-cols-[0.9fr_1.1fr]"
       >
-        {/* Drop zone */}
         <div
           role="button"
           tabIndex={0}
           aria-label="Upload resume file"
-          className="grid place-items-center min-h-72 p-4 border-2 rounded-2xl border-dashed border-cyan-700/40 bg-white/5 backdrop-blur-sm transition hover:-translate-y-0.5  focus-visible:outline-2 focus-visible:outline-cyan-500 max-[680px]:min-h-52 max-[480px]:rounded-xl"
+          className="grid min-h-72 place-items-center rounded-2xl border-2 border-dashed border-cyan-700/40 bg-white/5 p-4 backdrop-blur-sm transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-cyan-500 max-[680px]:min-h-52 max-[480px]:rounded-xl"
+          onClick={handleUploadClick}
         >
           {!uploadedFile ? (
             <>
-              <div
-                onClick={handleUploadClick}
-                className="cursor-pointer border-dashed border-2  hover:bg-white/10 border-cyan-700/40 rounded-xl p-6 flex flex-col items-center gap-3 hover:border-cyan-500/60"
-              >
-                <UploadCloud className="text-cyan-400 h-8 w-8" />
+              <div className="flex cursor-pointer flex-col items-center gap-3 rounded-xl border-2 border-dashed border-cyan-700/40 p-6 hover:border-cyan-500/60 hover:bg-white/10">
+                <UploadCloud className="h-8 w-8 text-cyan-400" />
                 <p className="text-sm font-semibold text-white">
-                  Click or drag to upload resume
+                  Click to upload resume
                 </p>
-                <p className="text-xs text-gray-500">
-                  PDF, DOC, DOCX supported
-                </p>
+                <p className="text-xs text-gray-500">PDF, DOC, DOCX supported</p>
               </div>
               <input
                 ref={uploadInputRef}
@@ -152,14 +158,12 @@ const HomePage = () => {
                 className="hidden"
                 aria-hidden="true"
                 tabIndex={-1}
-                onChange={(e) => {
-                  if (e.target.files[0]) setUploadedFile(e.target.files[0]);
-                }}
+                onChange={handleFileChange}
               />
             </>
           ) : (
             <>
-              <CheckCircle2 className="text-green-400 h-8 w-8" />
+              <CheckCircle2 className="h-8 w-8 text-green-400" />
               <p className="text-sm font-semibold text-green-400">
                 {uploadedFile.name}
               </p>
@@ -168,15 +172,14 @@ const HomePage = () => {
           )}
         </div>
 
-        {/* ATS panel */}
-        <div className="flex items-center justify-center min-h-72 gap-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 max-lg:flex-col max-[680px]:min-h-52 max-[480px]:rounded-xl">
+        <div className="flex min-h-72 items-center justify-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm max-lg:flex-col max-[680px]:min-h-52 max-[480px]:rounded-xl">
           {isUploaded ? (
             <>
-              <div className="flex-1 min-w-0 p-4 rounded-xl bg-linear-to-b from-green-500/90 to-green-700/90 w-full">
-                <p className="font-semibold text-white text-sm mb-3">
+              <div className="w-full flex-1 min-w-0 rounded-xl bg-linear-to-b from-green-500/90 to-green-700/90 p-4">
+                <p className="mb-3 text-sm font-semibold text-white">
                   Requirements Found
                 </p>
-                <ul className="flex flex-col gap-2 list-none p-0 m-0">
+                <ul className="m-0 flex list-none flex-col gap-2 p-0">
                   {[
                     "Contact information present",
                     "Professional summary included",
@@ -186,21 +189,17 @@ const HomePage = () => {
                     "Action verbs used",
                     "Clean formatting structure",
                   ].map((item) => (
-                    <li
-                      key={item}
-                      className="flex items-center gap-2 text-white text-xs"
-                    >
+                    <li key={item} className="flex items-center gap-2 text-xs text-white">
                       <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-white" />
                       {item}
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="flex-1 min-w-0 p-4 rounded-xl bg-linear-to-b from-red-400/90 to-red-600/90 w-full">
-                <p className="font-semibold text-white text-sm mb-3">
-                  Suggestions
-                </p>
-                <ul className="flex flex-col gap-2 list-none p-0 m-0">
+
+              <div className="w-full flex-1 min-w-0 rounded-xl bg-linear-to-b from-red-400/90 to-red-600/90 p-4">
+                <p className="mb-3 text-sm font-semibold text-white">Suggestions</p>
+                <ul className="m-0 flex list-none flex-col gap-2 p-0">
                   {[
                     `Add metrics for ${targetRole || "your role"}`,
                     "Include LinkedIn profile URL",
@@ -210,10 +209,7 @@ const HomePage = () => {
                     "Tailor summary to job description",
                     "Add relevant certifications",
                   ].map((item) => (
-                    <li
-                      key={item}
-                      className="flex items-center gap-2 text-white text-xs"
-                    >
+                    <li key={item} className="flex items-center gap-2 text-xs text-white">
                       <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-white" />
                       {item}
                     </li>
@@ -222,113 +218,50 @@ const HomePage = () => {
               </div>
             </>
           ) : (
-            <div className="ats-score-div">
-              <h2 className="text-center">Get Your ATS Score</h2>
-              <label className="flex flex-col gap-4 mt-2">
-                <h6>
-                  Target Role <span className="text-red-400">*</span>
-                </h6>
-                <input
-                  type="text"
-                  name="resume"
-                  placeholder="Target role which you are looking for?"
-                  required
-                  value={targetRole}
-                  onChange={(e) => setTargetRole(e.target.value)}
-                />
-                <h6>
-                  Experience <span className="text-red-400">*</span>
-                </h6>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  placeholder="Years of experience?"
-                  required
-                  value={experience}
-                  onChange={(e) => setExperience(e.target.value)}
-                />
+            <div className="w-full max-w-xl">
+              <h2 className="text-center text-2xl font-bold text-white">
+                Get Your ATS Score
+              </h2>
+
+              <div className="mt-6 flex flex-col gap-4">
+                <div>
+                  <h6 className="mb-2 font-semibold text-white">
+                    Target Role <span className="text-red-400">*</span>
+                  </h6>
+                  <input
+                    type="text"
+                    placeholder="Target role which you are looking for?"
+                    className="w-full rounded-lg border border-white/15 bg-white/5 p-3 text-white outline-none placeholder:text-gray-500 focus:border-cyan-500"
+                    value={targetRole}
+                    onChange={(event) => setTargetRole(event.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <h6 className="mb-2 font-semibold text-white">
+                    Experience <span className="text-red-400">*</span>
+                  </h6>
+                  <input
+                    type="number"
+                    placeholder="Years of experience?"
+                    className="w-full rounded-lg border border-white/15 bg-white/5 p-3 text-white outline-none placeholder:text-gray-500 focus:border-cyan-500"
+                    value={experience}
+                    onChange={(event) => setExperience(event.target.value)}
+                  />
+                </div>
+
                 <button
-                  className="rounded-xl px-5 mt-2 py-2.5 text-sm font-bold bg-linear-to-r from-cyan-600 to-cyan-500 text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5"
-                  onClick={() => setIsUploaded(true)}
                   type="button"
+                  className="mt-2 rounded-xl bg-linear-to-r from-cyan-600 to-cyan-500 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5"
+                  onClick={handleSubmit}
                 >
                   Submit
                 </button>
-              </label>
+              </div>
             </div>
           )}
         </div>
-
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-5">
-          <h2 className="text-xl font-bold text-red-700 mb-3">
-            Suggestions
-          </h2>
-
-          <ul className="space-y-2">
-            <li>⚡ Add more technical keywords</li>
-            <li>⚡ Quantify achievements</li>
-            <li>⚡ Improve project descriptions</li>
-            <li>⚡ Add certifications</li>
-            <li>⚡ Use stronger action verbs</li>
-          </ul>
-        </div>
-
-      </div>
-    ) : (
-      <div className="w-full">
-
-        <h2 className="text-center text-2xl font-bold text-slate-800">
-          Get Your ATS Score
-        </h2>
-
-        <div className="flex flex-col gap-4 mt-6">
-
-          <div>
-            <h6 className="mb-2 font-semibold">
-              Target Role <span className="text-red-600">*</span>
-            </h6>
-
-            <input
-              type="text"
-              placeholder="Target role which you are looking for?"
-              className="w-full border border-slate-300 rounded-lg p-3"
-            />
-          </div>
-
-          <div>
-            <h6 className="mb-2 font-semibold">
-              Experience <span className="text-red-600">*</span>
-            </h6>
-
-            <input
-              type="number"
-              placeholder="What is Your Experience?"
-              className="w-full border border-slate-300 rounded-lg p-3"
-            />
-          </div>
-
-          <button
-            className="rounded-xl px-5 py-3 mt-3 font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
-            onClick={() => {
-              if (!resumeFile) {
-                alert("Please upload a resume first");
-                return;
-              }
-
-              setIsUploaded(true);
-            }}
-          >
-            Analyze Resume
-          </button>
-
-        </div>
-      </div>
-    )}
-
-  </div>
-
-</section>
+      </section>
     </div>
   );
 };
