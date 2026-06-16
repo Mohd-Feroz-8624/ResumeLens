@@ -260,10 +260,11 @@ const HomePage = () => {
             </div>
           )}
         </div>
-<<<<<<< HEAD
-      </div>
-=======
       </section>
->>>>>>> 974e8c3fea383f7b75579f6775293aa541af8aea
     </div>
-      </section>
+  );
+}
+
+export default HomePage;
+
+    
