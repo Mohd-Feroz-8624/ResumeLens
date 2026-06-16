@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Mail, Loader2 } from "lucide-react";
+import API_URL from "../utils/api";
 
 const Contact = () => {
   const [name, setName] = useState("");
@@ -16,7 +17,7 @@ const Contact = () => {
     setLoading(true);
     setStatus("");
     try {
-      const res = await fetch("http://localhost:3000/api/contact", {
+      const res = await fetch(`${API_URL}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, subject, message }),

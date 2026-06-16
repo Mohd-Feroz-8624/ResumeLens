@@ -1,17 +1,10 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-<<<<<<< HEAD
-  TrendingUp,
-  Lightbulb,
-  Target,
-  CheckCircle2,
-=======
   CheckCircle2,
   Lightbulb,
   Target,
   TrendingUp,
->>>>>>> 974e8c3fea383f7b75579f6775293aa541af8aea
   UploadCloud,
 } from "lucide-react";
 
@@ -115,18 +108,10 @@ const HomePage = () => {
           />
         </div>
       </section>
-<<<<<<< HEAD
-      {/* Feature cards */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {features.map((f) => {
-          const Icon = f.icon;
-=======
 
       <section className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
         {features.map((feature) => {
           const Icon = feature.icon;
-
->>>>>>> 974e8c3fea383f7b75579f6775293aa541af8aea
           return (
             <article
               key={feature.title}
@@ -144,14 +129,8 @@ const HomePage = () => {
           );
         })}
       </section>
-<<<<<<< HEAD
-      {/* Upload + ATS form */}
-      <div
-        className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-4 items-stretch"
-=======
 
       <section
->>>>>>> 974e8c3fea383f7b75579f6775293aa541af8aea
         ref={uploadSectionRef}
         className="grid grid-cols-1 gap-4 items-stretch lg:grid-cols-[0.9fr_1.1fr]"
       >
@@ -281,13 +260,11 @@ const HomePage = () => {
             </div>
           )}
         </div>
-<<<<<<< HEAD
-      </div>
-=======
       </section>
->>>>>>> 974e8c3fea383f7b75579f6775293aa541af8aea
     </div>
   );
-};
+}
 
 export default HomePage;
+
+    

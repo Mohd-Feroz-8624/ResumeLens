@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Loader2, FileText, Mail, Phone, MapPin, Trash2 } from "lucide-react";
+import API_URL from "../utils/api";
 
 const ViewResume = () => {
   const [resumes, setResumes] = useState([]);
@@ -11,7 +12,7 @@ const ViewResume = () => {
     const fetchResumes = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3000/api/resumes", {
+        const res = await fetch(`${API_URL}/resumes`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch");
@@ -29,7 +30,7 @@ const ViewResume = () => {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:3000/api/resumes/${id}`, {
+      const res = await fetch(`${API_URL}/resumes/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TrendingUp, FileText, Sparkles, Bolt } from "lucide-react";
+import API_URL from "../utils/api";
 
 const features = [
   {
@@ -43,7 +44,7 @@ const Signup = () => {
     if (form.password !== form.confirm) { setError("Passwords do not match."); return; }
 
     try {
-      const res = await fetch("http://localhost:3000/api/auth/register", {
+      const res = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
