@@ -1,7 +1,8 @@
 // Frontend Auth Service - Use this in your React app
 // Save as: src/services/authService.js
 
-const API_BASE_URL = "http://localhost:3000/api/auth";
+import API_URL from '../utils/api';
+const API_BASE_URL = `${API_URL}/auth`;
 
 export const authService = {
   // Register new user

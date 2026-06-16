@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Save, Download } from "lucide-react";
 import { TEMPLATES, EMPTY } from "../assets/templates";
 import { TemplateThumbnail } from "../assets/TemplateThumbnail";
 import { ResumePreview } from "../assets/ResumePreview";
+import API_URL from "../utils/api";
 
 const Resume = () => {
   const [selectedId, setSelectedId] = useState(1);
@@ -24,7 +25,7 @@ const Resume = () => {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3000/api/resumes", {
+      const res = await fetch(`${API_URL}/resumes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

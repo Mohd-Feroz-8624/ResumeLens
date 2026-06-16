@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { CheckCircle2, UploadCloud, Check, X, ArrowLeft, Loader2 } from "lucide-react";
+import API_URL from "../utils/api";
 
 function ScoreRing({ score }) {
   const r = 52;
@@ -63,7 +64,7 @@ const Analysis = () => {
       formData.append("role", role);
       formData.append("experience", experience);
 
-      const res = await fetch("http://localhost:3000/api/analysis", {
+      const res = await fetch(`${API_URL}/analysis`, {
         method: "POST",
         body: formData,
       });
