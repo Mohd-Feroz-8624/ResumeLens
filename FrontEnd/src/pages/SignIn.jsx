@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { TrendingUp, BarChart2, Bolt } from "lucide-react";
+import { TrendingUp, BarChart2, Bolt, Loader2 } from "lucide-react";
 import API_URL from "../utils/api";
 
 const features = [
@@ -26,9 +26,13 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isLoading) return;
+    setIsLoading(true);
+    setError("");
     try {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -36,12 +40,17 @@ const SignIn = () => {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.message || "Login failed."); return; }
+      if (!res.ok) {
+        setError(data.message || "Login failed.");
+        setIsLoading(false);
+        return;
+      }
       localStorage.setItem("token", data.token);
       localStorage.setItem("userName", `${data.user.firstName} ${data.user.lastName}`);
       navigate("/home");
     } catch (err) {
       setError("Something went wrong. Please try again.");
+      setIsLoading(false);
     }
   };
 
@@ -117,9 +126,17 @@ const SignIn = () => {
 
               <button
                 type="submit"
-                className="w-full rounded-xl bg-linear-to-r from-cyan-600 to-cyan-500 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5"
+                disabled={isLoading}
+                className="w-full rounded-xl bg-linear-to-r from-cyan-600 to-cyan-500 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 flex items-center justify-center gap-2"
               >
-                Sign In
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin text-white" />
+                    Signing In...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </button>
             </form>
 

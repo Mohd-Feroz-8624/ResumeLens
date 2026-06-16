@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { TrendingUp, FileText, Sparkles, Bolt } from "lucide-react";
+import { TrendingUp, FileText, Sparkles, Bolt, Loader2 } from "lucide-react";
 import API_URL from "../utils/api";
 
 const features = [
@@ -36,12 +36,20 @@ const Signup = () => {
     confirm: "",
   });
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.password !== form.confirm) { setError("Passwords do not match."); return; }
+    if (isLoading) return;
+    if (form.password !== form.confirm) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
 
     try {
       const res = await fetch(`${API_URL}/auth/register`, {
@@ -55,12 +63,17 @@ const Signup = () => {
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.message || "Registration failed."); return; }
+      if (!res.ok) {
+        setError(data.message || "Registration failed.");
+        setIsLoading(false);
+        return;
+      }
       localStorage.setItem("token", data.token);
       localStorage.setItem("userName", `${data.user.firstName} ${data.user.lastName}`);
       navigate("/home");
     } catch (err) {
       setError("Something went wrong. Please try again.");
+      setIsLoading(false);
     }
   };
 
@@ -165,9 +178,17 @@ const Signup = () => {
 
               <button
                 type="submit"
-                className="w-full rounded-xl bg-linear-to-r from-cyan-600 to-cyan-500 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5 mt-4!"
+                disabled={isLoading || (form.password && !passwordValid)}
+                className="w-full rounded-xl bg-linear-to-r from-cyan-600 to-cyan-500 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5 mt-4! disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 flex items-center justify-center gap-2"
               >
-                Create Account
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin text-white" />
+                    Creating Account...
+                  </>
+                ) : (
+                  "Create Account"
+                )}
               </button>
             </form>
 

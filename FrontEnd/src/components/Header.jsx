@@ -76,10 +76,34 @@ const Header = () => {
 
           <button
             type="button"
+            onClick={() => { navigate("/view-resume"); setIsMobileMenuOpen(false); }}
+            className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-gray-300 transition hover:border-white/40 hover:text-white"
+          >
+            My Resumes
+          </button>
+
+          <button
+            type="button"
             onClick={() => { navigate("/resume"); setIsMobileMenuOpen(false); }}
             className="rounded-full bg-linear-to-r from-cyan-600 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5"
           >
             Create Resume
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { navigate("/contact"); setIsMobileMenuOpen(false); }}
+            className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-gray-300 transition hover:border-white/40 hover:text-white lg:hidden"
+          >
+            Contact
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+            className="rounded-full border border-red-900/30 bg-red-950/25 px-4 py-2 text-sm font-medium text-red-400 transition hover:bg-red-900/20 lg:hidden"
+          >
+            Logout
           </button>
 
           <div

@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { CheckCircle2, UploadCloud, Check, X, ArrowLeft, Loader2 } from "lucide-react";
 import API_URL from "../utils/api";
 
@@ -33,6 +34,7 @@ function ScoreRing({ score }) {
 
 
 const Analysis = () => {
+  const location = useLocation();
   const [file, setFile] = useState(null);
   const [role, setRole] = useState("");
   const [experience, setExperience] = useState("");
@@ -40,6 +42,16 @@ const Analysis = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const fileRef = useRef(null);
+
+  useEffect(() => {
+    if (location.state && location.state.result) {
+      setResult(location.state.result);
+      if (location.state.role) setRole(location.state.role);
+      if (location.state.experience) setExperience(location.state.experience);
+      // Clear navigation state so refreshing does not trigger reload of the old state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const handleFile = (e) => {
     const f = e.target.files[0];
