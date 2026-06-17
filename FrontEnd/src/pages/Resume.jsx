@@ -8,7 +8,6 @@ import API_URL from "../utils/api";
 const Resume = () => {
   const [selectedId, setSelectedId] = useState(1);
   const [data, setData] = useState(EMPTY);
-  const [saved, setSaved] = useState(false);
   const sliderRef = useRef(null);
   const previewRef = useRef(null);
 
@@ -22,29 +21,6 @@ const Resume = () => {
       sliderRef.current.scrollBy({ left: dir * 100, behavior: "smooth" });
   };
 
-  const handleSave = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/resumes`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          name: data.name || "Untitled Resume",
-          template: tpl.name,
-          data,
-        }),
-      });
-      if (!res.ok) throw new Error("Save failed");
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    } catch (err) {
-      console.error("Failed to save resume:", err);
-      alert("Failed to save resume. Please make sure you are logged in.");
-    }
-  };
 
   const handleDownload = () => {
     const node = previewRef.current;
@@ -578,18 +554,7 @@ const Resume = () => {
                 <span style={{ color: a, fontWeight: 600 }}>{tpl.name}</span>
               </div>
               <div className="flex gap-2">
-                <button
-                  onClick={handleSave}
-                  className="cursor-pointer flex items-center justify-center gap-1.5 self-end rounded-lg border px-4 py-2 text-[13px] font-semibold transition"
-                  style={{
-                    borderColor: a,
-                    color: saved ? "#fff" : a,
-                    background: saved ? a : "#fff",
-                  }}
-                >
-                  <Save className="h-3.5 w-3.5" />
-                  {saved ? "Saved!" : "Save"}
-                </button>
+                
                 <button
                   onClick={handleDownload}
                   className="cursor-pointer flex items-center justify-center gap-1.5 self-end rounded-lg border-none px-5 py-2 text-[13px] font-semibold text-white"

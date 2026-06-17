@@ -74,13 +74,7 @@ const Header = () => {
             Analysis
           </button>
 
-          <button
-            type="button"
-            onClick={() => { navigate("/view-resume"); setIsMobileMenuOpen(false); }}
-            className="rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-gray-300 transition hover:border-white/40 hover:text-white"
-          >
-            My Resumes
-          </button>
+          
 
           <button
             type="button"
