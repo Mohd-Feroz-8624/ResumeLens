@@ -82,6 +82,7 @@ const Analysis = () => {
       });
       if (!res.ok) {
         const err = await res.json();
+        console.error("Analysis error:", err);
         throw new Error(err.message || "Analysis failed");
       }
       const data = await res.json();
