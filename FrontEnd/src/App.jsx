@@ -7,11 +7,12 @@ import Signup from "./pages/SignUp";
 import Analysis from "./pages/Analysis";
 import Contact from "./pages/Contact";
 import Resume from "./pages/Resume";
-import ViewResume from "./pages/ViewResume";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Error from "./pages/Error";
 import TermsCondition from "./pages/TermsCondition";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicOnlyRoute from "./components/PublicOnlyRoute";
 
 function App() {
   const location = useLocation();
@@ -24,15 +25,68 @@ function App() {
       {!hideLayout && <Header />}
       <main className="flex-1">
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/register" element={<SignIn />} />
-          <Route path="/analysis" element={<Analysis />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/resume" element={<Resume />} />
-          <Route path="/view-resume" element={<ViewResume />} />
+          <Route path="/" element={
+            <PublicOnlyRoute>
+              <LandingPage />
+            </PublicOnlyRoute>
+          } />
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/signin"
+            element={
+              <PublicOnlyRoute>
+                <SignIn />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicOnlyRoute>
+                <Signup />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <PublicOnlyRoute>
+                <SignIn />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/analysis"
+            element={
+              <ProtectedRoute>
+                <Analysis />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contact"
+            element={
+              <ProtectedRoute>
+                <Contact />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resume"
+            element={
+              <ProtectedRoute>
+                <Resume />
+              </ProtectedRoute>
+            }
+          />
+         
           <Route path="/terms" element={<TermsCondition />} />
           <Route path="*" element={<Error />} />
         </Routes>

@@ -1,12 +1,13 @@
 import { useState, useRef } from "react";
+import { ChevronLeft, ChevronRight, Save, Download } from "lucide-react";
 import { TEMPLATES, EMPTY } from "../assets/templates";
 import { TemplateThumbnail } from "../assets/TemplateThumbnail";
 import { ResumePreview } from "../assets/ResumePreview";
+import API_URL from "../utils/api";
 
 const Resume = () => {
   const [selectedId, setSelectedId] = useState(1);
   const [data, setData] = useState(EMPTY);
-  const [saved, setSaved] = useState(false);
   const sliderRef = useRef(null);
   const previewRef = useRef(null);
 
@@ -20,20 +21,6 @@ const Resume = () => {
       sliderRef.current.scrollBy({ left: dir * 100, behavior: "smooth" });
   };
 
-  const handleSave = () => {
-    const list = JSON.parse(localStorage.getItem("savedResumes") || "[]");
-    const entry = {
-      id: Date.now(),
-      name: data.name || "Untitled Resume",
-      template: tpl.name,
-      data,
-      savedAt: new Date().toISOString(),
-    };
-    list.push(entry);
-    localStorage.setItem("savedResumes", JSON.stringify(list));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
 
   const handleDownload = () => {
     const node = previewRef.current;
@@ -96,9 +83,9 @@ const Resume = () => {
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => scroll(-1)}
-            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-white/20 bg-white/5 text-base text-gray-300 hover:bg-white/10"
+            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-white/20 bg-white/5 text-gray-300 hover:bg-white/10"
           >
-            ‹
+            <ChevronLeft className="h-4 w-4" />
           </button>
           <div
             ref={sliderRef}
@@ -115,9 +102,9 @@ const Resume = () => {
           </div>
           <button
             onClick={() => scroll(1)}
-            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-white/20 bg-white/5 text-base text-gray-300 hover:bg-white/10"
+            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-white/20 bg-white/5 text-gray-300 hover:bg-white/10"
           >
-            ›
+            <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -567,22 +554,13 @@ const Resume = () => {
                 <span style={{ color: a, fontWeight: 600 }}>{tpl.name}</span>
               </div>
               <div className="flex gap-2">
-                <button
-                  onClick={handleSave}
-                  className="cursor-pointer self-end rounded-lg border px-4 py-2 text-[13px] font-semibold transition"
-                  style={{
-                    borderColor: a,
-                    color: saved ? "#fff" : a,
-                    background: saved ? a : "#fff",
-                  }}
-                >
-                  {saved ? "Saved!" : "Save"}
-                </button>
+                
                 <button
                   onClick={handleDownload}
-                  className="cursor-pointer self-end rounded-lg border-none px-5 py-2 text-[13px] font-semibold text-white"
+                  className="cursor-pointer flex items-center justify-center gap-1.5 self-end rounded-lg border-none px-5 py-2 text-[13px] font-semibold text-white"
                   style={{ background: a }}
                 >
+                  <Download className="h-3.5 w-3.5" />
                   Download PDF
                 </button>
               </div>

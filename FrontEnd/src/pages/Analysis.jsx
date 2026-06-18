@@ -1,4 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { CheckCircle2, UploadCloud, Check, X, ArrowLeft, Loader2 } from "lucide-react";
+import API_URL from "../utils/api";
 
 function ScoreRing({ score }) {
   const r = 52;
@@ -27,20 +30,11 @@ function ScoreRing({ score }) {
   );
 }
 
-const MATCHED = ["Communication", "Problem Solving", "Teamwork", "JavaScript", "React", "Python"];
-const MISSING = ["Docker", "CI/CD", "TypeScript", "AWS", "Agile", "Kubernetes"];
 
-function buildSuggestions(role) {
-  return [
-    `Add quantifiable achievements for ${role} (e.g., "reduced load time by 35%")`,
-    "Use strong action verbs: built, led, optimized, shipped, designed",
-    "Add a LinkedIn URL in your contact section",
-    `Include certifications or courses relevant to ${role}`,
-    "Keep resume to 1–2 pages; remove outdated or irrelevant roles",
-  ];
-}
+
 
 const Analysis = () => {
+  const location = useLocation();
   const [file, setFile] = useState(null);
   const [role, setRole] = useState("");
   const [experience, setExperience] = useState("");
@@ -48,6 +42,16 @@ const Analysis = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const fileRef = useRef(null);
+
+  useEffect(() => {
+    if (location.state && location.state.result) {
+      setResult(location.state.result);
+      if (location.state.role) setRole(location.state.role);
+      if (location.state.experience) setExperience(location.state.experience);
+      // Clear navigation state so refreshing does not trigger reload of the old state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const handleFile = (e) => {
     const f = e.target.files[0];
@@ -60,17 +64,39 @@ const Analysis = () => {
     if (f) { setFile(f); setError(""); }
   };
 
-  const handleAnalyze = (e) => {
+  const handleAnalyze = async (e) => {
     e.preventDefault();
     if (!file) { setError("Please upload your resume first."); return; }
     if (!role.trim()) { setError("Please enter a target role."); return; }
     setError("");
     setLoading(true);
-    setTimeout(() => {
-      const score = Math.floor(55 + Math.random() * 31);
-      setResult({ score, matched: MATCHED, missing: MISSING, suggestions: buildSuggestions(role) });
+    try {
+      const formData = new FormData();
+      formData.append("resume", file);
+      formData.append("role", role);
+      formData.append("experience", experience);
+
+      const res = await fetch(`${API_URL}/analysis`, {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Analysis error:", err);
+        throw new Error(err.message || "Analysis failed");
+      }
+      const data = await res.json();
+      setResult({
+        score: data.score,
+        matched: data.matched,
+        missing: data.missing,
+        suggestions: data.suggestions,
+      });
+    } catch (err) {
+      setError(err.message || "Failed to analyze resume. Please try again.");
+    } finally {
       setLoading(false);
-    }, 1800);
+    }
   };
 
   const reset = () => { setResult(null); setFile(null); setRole(""); setExperience(""); };
@@ -103,13 +129,13 @@ const Analysis = () => {
           >
             {file ? (
               <>
-                <i className="fa-regular fa-circle-check text-green-400 text-3xl"></i>
+                <CheckCircle2 className="text-green-400 h-8 w-8" />
                 <p className="text-sm font-semibold text-green-400">{file.name}</p>
                 <p className="text-xs text-gray-500">Click to change file</p>
               </>
             ) : (
               <>
-                <i className="fa-solid fa-cloud-arrow-up text-cyan-400 text-3xl"></i>
+                <UploadCloud className="text-cyan-400 h-8 w-8" />
                 <p className="text-sm font-semibold text-white">Click or drag to upload resume</p>
                 <p className="text-xs text-gray-500">PDF, DOC, DOCX supported</p>
               </>
@@ -151,10 +177,7 @@ const Analysis = () => {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                  </svg>
+                  <Loader2 className="h-4 w-4 animate-spin text-white" />
                   Analyzing Resume...
                 </span>
               ) : "Analyze Resume"}
@@ -179,7 +202,7 @@ const Analysis = () => {
                 <div className="flex flex-wrap gap-2">
                   {result.matched.map((k) => (
                     <span key={k} className="flex items-center gap-1 rounded-full border border-green-500/30 bg-green-900/20 px-2.5 py-1 text-xs font-medium text-green-400">
-                      <i className="fa-solid fa-check text-[10px]"></i> {k}
+                      <Check className="h-3 w-3" /> {k}
                     </span>
                   ))}
                 </div>
@@ -189,7 +212,7 @@ const Analysis = () => {
                 <div className="flex flex-wrap gap-2">
                   {result.missing.map((k) => (
                     <span key={k} className="flex items-center gap-1 rounded-full border border-red-500/30 bg-red-900/20 px-2.5 py-1 text-xs font-medium text-red-400">
-                      <i className="fa-solid fa-xmark text-[10px]"></i> {k}
+                      <X className="h-3 w-3" /> {k}
                     </span>
                   ))}
                 </div>
@@ -214,9 +237,9 @@ const Analysis = () => {
 
           <button
             onClick={reset}
-            className="self-start rounded-xl border border-white/20 bg-white/5 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+            className="self-start flex items-center rounded-xl border border-white/20 bg-white/5 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
           >
-            ← Analyze Another Resume
+            <ArrowLeft className="h-4 w-4 mr-2" /> Analyze Another Resume
           </button>
         </div>
       )}

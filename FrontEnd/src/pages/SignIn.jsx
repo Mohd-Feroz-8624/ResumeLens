@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { TrendingUp, BarChart2, Bolt, Loader2 } from "lucide-react";
+import API_URL from "../utils/api";
 
 const features = [
   {
-    icon: "fa-solid fa-chart-line",
+    icon: TrendingUp,
     title: "Smart ATS Optimization",
     desc: "Improve keyword matching and boost resume selection chances.",
   },
   {
-    icon: "fa-solid fa-chart-bar",
+    icon: BarChart2,
     title: "Detailed Insights",
     desc: "Get feedback on skills, formatting, and missing sections.",
   },
   {
-    icon: "fa-solid fa-bolt",
+    icon: Bolt,
     title: "Instant Analysis",
     desc: "Upload your resume and get results in seconds.",
   },
@@ -24,16 +26,31 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    const user = users.find((u) => u.email === email && u.password === password);
-    if (user) {
-      localStorage.setItem("userName", `${user.firstName} ${user.lastName}`);
+    if (isLoading) return;
+    setIsLoading(true);
+    setError("");
+    try {
+      const res = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "Login failed.");
+        setIsLoading(false);
+        return;
+      }
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", `${data.user.firstName} ${data.user.lastName}`);
       navigate("/home");
-    } else {
-      setError("Invalid email or password. Please try again.");
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+      setIsLoading(false);
     }
   };
 
@@ -54,17 +71,20 @@ const SignIn = () => {
           <h1 className="text-3xl font-extrabold text-white mb-2">Welcome back</h1>
           <p className="text-gray-400 text-sm mb-10">Sign in to continue building your career.</p>
           <div className="space-y-7">
-            {features.map((f) => (
-              <div key={f.title} className="flex gap-4 items-start">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/40 text-cyan-400">
-                  <i className={f.icon}></i>
+            {features.map((f) => {
+              const Icon = f.icon;
+              return (
+                <div key={f.title} className="flex gap-4 items-start">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-900/40 text-cyan-400">
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-white mb-1">{f.title}</h2>
+                    <p className="text-xs text-gray-400">{f.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-sm font-bold text-white mb-1">{f.title}</h2>
-                  <p className="text-xs text-gray-400">{f.desc}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -106,9 +126,17 @@ const SignIn = () => {
 
               <button
                 type="submit"
-                className="w-full rounded-xl bg-linear-to-r from-cyan-600 to-cyan-500 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5"
+                disabled={isLoading}
+                className="w-full rounded-xl bg-linear-to-r from-cyan-600 to-cyan-500 py-2.5 text-sm font-bold text-white shadow-lg shadow-cyan-900/40 transition hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0 flex items-center justify-center gap-2"
               >
-                Sign In
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin text-white" />
+                    Signing In...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </button>
             </form>
 

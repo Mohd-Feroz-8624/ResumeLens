@@ -1,27 +1,28 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { TrendingUp, Lightbulb, FileText, Target, Bolt } from "lucide-react";
 
 const features = [
   {
-    icon: "fa-solid fa-chart-line",
+    icon: TrendingUp,
     title: "ATS Compatibility Score",
     desc: "Know exactly how well your resume performs against applicant tracking systems used by top companies.",
     color: "#0891b2",
   },
   {
-    icon: "fa-solid fa-lightbulb",
+    icon: Lightbulb,
     title: "Smart Suggestions",
     desc: "Get AI-powered recommendations to strengthen your bullets, add missing keywords, and improve clarity.",
     color: "#7c3aed",
   },
   {
-    icon: "fa-solid fa-file-pen",
+    icon: FileText,
     title: "Resume Builder",
     desc: "Create a professional resume from scratch using 8 beautiful templates with a real-time live preview.",
     color: "#0f766e",
   },
   {
-    icon: "fa-solid fa-bullseye",
+    icon: Target,
     title: "Role-Based Optimization",
     desc: "Tailor your resume to specific job descriptions and increase your chances of landing interviews.",
     color: "#dc2626",
@@ -43,7 +44,7 @@ const LandingPage = () => {
       {/* Hero */}
       <section className="flex flex-col items-center justify-center px-6 pt-24 pb-20 text-center">
         <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-700/50 bg-cyan-900/40 px-4 py-1.5 text-sm font-semibold text-cyan-400">
-          <i className="fa-solid fa-bolt"></i>
+          <Bolt className="h-4 w-4" />
           AI-Powered Resume Analysis
         </span>
         <h1 className="mb-5 max-w-3xl text-[clamp(2.2rem,5vw,3.5rem)] font-extrabold leading-tight">
@@ -76,21 +77,24 @@ const LandingPage = () => {
           Everything you need to get hired
         </h2>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {features.map((f) => (
-            <div
-              key={f.title}
-              className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition hover:-translate-y-1 hover:border-white/20"
-            >
+          {features.map((f) => {
+            const Icon = f.icon;
+            return (
               <div
-                className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl text-lg"
-                style={{ background: f.color + "33", color: f.color }}
+                key={f.title}
+                className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition hover:-translate-y-1 hover:border-white/20"
               >
-                <i className={f.icon}></i>
+                <div
+                  className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl"
+                  style={{ background: f.color + "33", color: f.color }}
+                >
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="mb-2 text-sm font-bold text-white">{f.title}</h3>
+                <p className="text-xs leading-relaxed text-gray-400">{f.desc}</p>
               </div>
-              <h3 className="mb-2 text-sm font-bold text-white">{f.title}</h3>
-              <p className="text-xs leading-relaxed text-gray-400">{f.desc}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
