@@ -7,7 +7,6 @@ import Signup from "./pages/SignUp";
 import Analysis from "./pages/Analysis";
 import Contact from "./pages/Contact";
 import Resume from "./pages/Resume";
-import ViewResume from "./pages/ViewResume";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Error from "./pages/Error";
@@ -87,14 +86,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/view-resume"
-            element={
-              <ProtectedRoute>
-                <ViewResume />
-              </ProtectedRoute>
-            }
-          />
+         
           <Route path="/terms" element={<TermsCondition />} />
           <Route path="*" element={<Error />} />
         </Routes>
