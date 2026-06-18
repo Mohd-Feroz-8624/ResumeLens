@@ -276,13 +276,13 @@ router.post("/", upload.single("resume"), async (req, res) => {
     let contactScore = 0;
     const missingContact = [];
 
-    if (emailPattern.test(normalizedText)) contactScore += 8;
+    if (emailPattern.test(normalizedText)) contactScore += 10;
     else missingContact.push("Email address");
 
-    if (phonePattern.test(normalizedText)) contactScore += 8;
+    if (phonePattern.test(normalizedText)) contactScore +=10;
     else missingContact.push("Phone number");
 
-    if (linkedinPattern.test(normalizedText)) contactScore += 4;
+    if (linkedinPattern.test(normalizedText)) contactScore += 8;
     else missingContact.push("LinkedIn profile URL");
 
     // Calculate overall ATS Score (capped at 100)
