@@ -151,7 +151,7 @@ const HomePage = () => {
           <div className="flex flex-col gap-4">
             <span className="inline-flex w-fit items-center gap-2 rounded-full border border-cyan-700/50 bg-cyan-900/40 px-4 py-1.5 text-sm font-semibold text-cyan-400 animate-fadeInScale stagger-delay-1">
               <CheckCircle2 className="h-4 w-4 animate-pulse" />
-              AI-Powered Resume Analysis
+              Resume Analyzer
             </span>
 
             <h1 className="text-[clamp(2rem,4.4vw,3.2rem)] font-extrabold leading-[1.07] text-white max-[680px]:text-[clamp(1.8rem,8vw,2.6rem)] animate-fadeInUp stagger-delay-2">
