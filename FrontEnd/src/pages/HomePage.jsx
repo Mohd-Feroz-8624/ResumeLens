@@ -232,7 +232,7 @@ const HomePage = () => {
               </div>
               <div className="animate-fadeInUp stagger-delay-1">
                 <h3 className="mb-1 text-sm font-bold text-white">Upload Resume</h3>
-                <p className="text-xs text-gray-400">PDF, DOC, DOCX (Max 5MB)</p>
+                <p className="text-xs text-gray-400">PDF, DOC, DOCX </p>
               </div>
               <div className="h-0.5 w-0 bg-linear-to-r from-cyan-400 to-transparent transition-all duration-300 group-hover:w-full"></div>
             </div>
@@ -245,11 +245,11 @@ const HomePage = () => {
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-bold text-white">ATS Score</h3>
                   <span className="inline-flex items-center gap-1 rounded-full bg-green-900/30 px-2 py-1 text-xs font-semibold text-green-400 animate-pulse">
-                    <CheckCircle2 className="h-3 w-3" /> 85/100
+                    <CheckCircle2 className="h-3 w-3" /> LOADING
                   </span>
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
-                  <div className="h-full w-[85%] rounded-full bg-gradient-to-r from-cyan-500 to-cyan-400 animate-fadeInScale transition-all duration-1000"></div>
+                  <div className="h-full w-[85%] rounded-full bg-linear-to-r from-cyan-500 to-cyan-400 animate-fadeInScale transition-all duration-1000"></div>
                 </div>
               </div>
 
